@@ -10,6 +10,7 @@ public class CameraController : MonoBehaviour
     public float xOffset;
     [Range(-6f, 6f)]
     public float yOffset;
+
     private Vector3 finalCameraPosition;
 
     // Update is called once per frame
