@@ -31,10 +31,10 @@ public class CameraController : MonoBehaviour
         transform.position = finalCameraPosition;
 
         // Spawn more background
-        if (transform.localPosition.x % 23.0f >= 22.9f)
+        if (transform.position.x + Constants.max_distance_spawn_background > position.x )
         {
-            position.x += 53.2f;
-            Destroy(UnityEngine.Object.Instantiate(levelAssets, position, levelAssets.transform.rotation), 600.0f);
+            position.x += Constants.next_spawn_background;
+            Destroy(UnityEngine.Object.Instantiate(levelAssets, position, levelAssets.transform.rotation), Constants.time_to_destroy_cloned_object);
         }
     }
 }

@@ -8,15 +8,9 @@ public class PowerUpCollision : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // Make the object dissapear
-        HOTween.To(transform, 2.0f, "localScale", Vector3.zero);
-        string key = "Quant" + gameObject.GetComponent<SpriteRenderer>().sprite.name;
-        PlayerPrefs.SetInt(key, PlayerPrefs.GetInt(key) + 1);
+        HOTween.To(transform, Constants.time_to_complete_tween, "localScale", Vector3.zero);
 
-        Debug.Log("NEW COUNT FOR POWER UP " + PlayerPrefs.GetInt(key));
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        Destroy(gameObject);
+        GameObject character = GameObject.FindGameObjectWithTag("Player");
+        character.GetComponent<AdLandCharacterController>().isUnderTheinfluence(Constants.GetValueOfInfluence(gameObject.GetComponent<SpriteRenderer>().sprite.name));
     }
 }

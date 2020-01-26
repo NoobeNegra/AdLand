@@ -1,12 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Holoville.HOTween;
 
 public class AdLandCharacterController : MonoBehaviour
 {
     [Range(0f, 2f)]
     public float baseSpeed;
-    public float raycastLenght;
+    public Camera mainCamera;
 
     //Internal stuff
     private Rigidbody2D rb;
@@ -26,6 +27,13 @@ public class AdLandCharacterController : MonoBehaviour
 
     private float jumpLastY; //Used to determine when the player is falling in a jump
     private float endTriggerHeight; //once the jump starts, the end animation will be played at this height from the ground
+
+    private bool wasLastJumpALongOne;
+    private bool isSpeeding;
+    private float currentSpeed;
+
+    private Touch touch;
+
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -41,12 +49,18 @@ public class AdLandCharacterController : MonoBehaviour
 
         movementSpeed = new Vector3(baseSpeed, 0f, 0f);
         jumpForce = new Vector2(0f, 0f);
+        currentSpeed = baseSpeed;
+
+        wasLastJumpALongOne = false;
     }
 
     void Update()
     {
+        if (!isAlive)
+            return;
+
         //Just for preview reasons, keep assigning baseSpeed every frime
-        movementSpeed.x = baseSpeed;
+        movementSpeed.x = currentSpeed;
 
         //add fw movement
         transform.position += movementSpeed;
@@ -55,10 +69,12 @@ public class AdLandCharacterController : MonoBehaviour
         if (!isJumping)
         {
             //If jump was pressed on this frame, save the timestamp of this frame
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space) || Input.touchCount > 0)
             {
                 isJumping = true;
                 jumpPressTime = Time.time;
+                if(Input.touchCount > 0)
+                    touch = Input.GetTouch(0);
                 //Do not prepare the jump unless it's a hold
             }
         }
@@ -70,10 +86,11 @@ public class AdLandCharacterController : MonoBehaviour
             {
                 //Player is charging the jump, play the preparation anim
                 animator.SetInteger(Constants.anim_char_movementStatus, Constants.anim_char_jumpStatus_preparation);
+                wasLastJumpALongOne = true;
             }
 
             //Jump when the player releases the key or the jump_maxHoldTime is exceeded
-            if (Input.GetKeyUp(KeyCode.Space) || (Time.time - jumpPressTime > Constants.jump_maxHoldTime))
+            if (Input.GetKeyUp(KeyCode.Space) || (Time.time - jumpPressTime > Constants.jump_maxHoldTime) || touch.phase == TouchPhase.Ended)
             {
                 isJumpReleased = true;
                 jumpForceApplied = false;
@@ -82,7 +99,7 @@ public class AdLandCharacterController : MonoBehaviour
                 //Use the pressed time as multiplier for the force
                 jumpForce.y = Constants.jump_baseForce * (pressedTime + Constants.jump_minimumJump);
 
-                Debug.Log("Pressed time>" + pressedTime + " JumpForce>" + jumpForce.y);
+                //Debug.Log("Pressed time>" + pressedTime + " JumpForce>" + jumpForce.y);
                 //Determine how high it's going to start playing the end anim based on the jump force. The higher, the sooner
                 if (jumpForce.y < 500f)
                 {
@@ -117,7 +134,7 @@ public class AdLandCharacterController : MonoBehaviour
                     if (transform.position.y < jumpLastY)
                     {
                         isAscending = false;
-                        Debug.Log("Descending started at +/-" + transform.position.y);
+                        //Debug.Log("Descending started at +/-" + transform.position.y);
                     }
                     else
                     {
@@ -153,6 +170,20 @@ public class AdLandCharacterController : MonoBehaviour
         jumpForceApplied = false;
         animator.SetInteger(Constants.anim_char_movementStatus, Constants.anim_char_jumpStatus_running);
 
+        // Check if it was a short jump or a long jump
+        if (wasLastJumpALongOne)
+        {
+            object[] parms = new object[1] { Constants.high_jump_bost_time };
+            StartCoroutine("ZommOutAndSpeedUp", parms);
+            
+        }
+        else if (isSpeeding)
+        {
+            StopCoroutine("ZommOutAndSpeedUp");
+            StartCoroutine("ZommInAndSlowDown");
+        }
+        wasLastJumpALongOne = false;
+
         //Check if jump was pressed during the jump and still is on hold at the end of the execution of the jump. 
         //If so re-start the jumpPressed timer but only here, after the first jump ends
         if (Input.GetKey(KeyCode.Space))
@@ -161,15 +192,52 @@ public class AdLandCharacterController : MonoBehaviour
             jumpPressTime = Time.time;
         }
     }
+
+    public void endGame()
+    {
+        if (isAlive)
+        {
+            StopAllCoroutines();
+            isAlive = false;
+            animator.SetBool("isAlive", false);
+            GameObject.Find("Canvas").SendMessage("SendDieText");
+            GameObject.Find("Spawner").SetActive(false);
+        }
+    }
+
+    public void isUnderTheinfluence(object[] parms)
+    {
+        StartCoroutine("ZommOutAndSpeedUp", parms);
+    }
+
+    IEnumerator ZommOutAndSpeedUp(object[] parms)
+    {
+        if (parms.Length > 1)
+        {
+            StartCoroutine("Exhaustation", parms);
+        }
+
+        isSpeeding = true;
+        currentSpeed *= Constants.boosted_speed_factor;
+        HOTween.To(mainCamera, Constants.time_to_complete_camera_tween, "orthographicSize", Constants.min_zoom_while_boosted);
+        yield return new WaitForSeconds((int)parms[0]);
+        currentSpeed = baseSpeed;
+        HOTween.To(mainCamera, Constants.time_to_complete_camera_tween, "orthographicSize", Constants.normal_zoom);
+    }
+
+    IEnumerator Exhaustation(object[] parms)
+    {
+        yield return new WaitForSeconds((int)parms[0]);
+        currentSpeed *= (float)parms[1];
+        yield return new WaitForSeconds((int)parms[2]);
+        currentSpeed = baseSpeed;
+    }
+
+    IEnumerator ZommInAndSlowDown()
+    {
+        isSpeeding = false;
+        currentSpeed = baseSpeed;
+        yield return HOTween.To(mainCamera, Constants.time_to_complete_camera_tween, "orthographicSize", Constants.normal_zoom);
+    }
+    
 }
-/*
-RaycastHit2D ground = Physics2D.Raycast(transform.position, Vector2.down, raycastLenght, 1 << 9);
-Debug.DrawLine(transform.position, new Vector3(transform.position.x, transform.position.y - raycastLenght, 0f), Color.red, 3f);
-//If the raycast hits the ground
-if (ground.collider != null)
-{
-    animator.SetInteger(Constants.anim_char_jumpStatus, Constants.anim_char_jumpStatus_ending);
-    raycastGround = false;
-    //The ending animation, at the end, has an event that calls the jump stop function.
-}
-*/

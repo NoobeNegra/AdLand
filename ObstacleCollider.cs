@@ -2,19 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObectsCollider : MonoBehaviour
+public class ObstacleCollider : MonoBehaviour
 {
-    ContactPoint2D[] contact;
-    
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        collision.GetContacts(contact);
+        Vector3 direction = collision.collider.transform.position - transform.position;
 
-        Debug.Log("contact.Length " + contact.Length);
-
-        // If the colission is on the side, die
-        //if(collision.OverlapPoint())
-
-        //if the collision is on the top, walk over
+        if (direction.y < 1)
+        {
+            GameObject character = GameObject.FindGameObjectWithTag("Player");
+            character.GetComponent<AdLandCharacterController>().endGame();
+        }
     }
 }
