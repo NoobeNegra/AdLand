@@ -1,7 +1,7 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Holoville.HOTween;
 
 public class AdLandCharacterController : MonoBehaviour
 {
@@ -71,16 +71,25 @@ public class AdLandCharacterController : MonoBehaviour
             //If jump was pressed on this frame, save the timestamp of this frame
             if (Input.GetKeyDown(KeyCode.Space) || Input.touchCount > 0)
             {
+
                 isJumping = true;
                 jumpPressTime = Time.time;
-                if(Input.touchCount > 0)
+                if (Input.touchCount > 0)
                     touch = Input.GetTouch(0);
-                //Do not prepare the jump unless it's a hold
             }
         }
         //The only thing to check once a jump has started is if the key is being released
         else if (!isJumpReleased)
         {
+            /*Touch[] touches = Input.touches;
+            foreach (Touch t in touches)
+            {
+                if (t.phase == TouchPhase.Ended)
+                {
+                    touch.phase = TouchPhase.Ended;
+                    break;
+                }
+            }*/
             //Check for how long it has been pressed. If longer than jump_preparationTime then play the preparation anim
             if (Time.time - jumpPressTime > Constants.jump_preparationTime)
             {
@@ -219,10 +228,10 @@ public class AdLandCharacterController : MonoBehaviour
 
         isSpeeding = true;
         currentSpeed *= Constants.boosted_speed_factor;
-        HOTween.To(mainCamera, Constants.time_to_complete_camera_tween, "orthographicSize", Constants.min_zoom_while_boosted);
+        mainCamera.DOOrthoSize(Constants.min_zoom_while_boosted, Constants.time_to_complete_camera_tween);
         yield return new WaitForSeconds((int)parms[0]);
         currentSpeed = baseSpeed;
-        HOTween.To(mainCamera, Constants.time_to_complete_camera_tween, "orthographicSize", Constants.normal_zoom);
+        mainCamera.DOOrthoSize(Constants.normal_zoom, Constants.time_to_complete_camera_tween);
     }
 
     IEnumerator Exhaustation(object[] parms)
@@ -237,7 +246,7 @@ public class AdLandCharacterController : MonoBehaviour
     {
         isSpeeding = false;
         currentSpeed = baseSpeed;
-        yield return HOTween.To(mainCamera, Constants.time_to_complete_camera_tween, "orthographicSize", Constants.normal_zoom);
+        yield return mainCamera.DOOrthoSize(Constants.normal_zoom, Constants.time_to_complete_camera_tween);
     }
     
 }

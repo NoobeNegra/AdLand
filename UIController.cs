@@ -61,8 +61,8 @@ public class UIController : MonoBehaviour
         dollarImage.enabled = true;
         homeText.enabled = true;
 
-        quillCount.text = PlayerPrefs.GetInt("QuillCount").ToString();
-        kittyCount.text = PlayerPrefs.GetInt("KittyCount").ToString();
+        quillCount.text = PlayerPrefs.GetInt("quill(Clone)").ToString();
+        kittyCount.text = PlayerPrefs.GetInt("golden_kitten(Clone)").ToString();
         finalCoinCount.text = PlayerPrefs.GetInt("Coins").ToString();
     }
 }

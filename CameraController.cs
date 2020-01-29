@@ -13,11 +13,9 @@ public class CameraController : MonoBehaviour
     public float yOffset;
 
     public GameObject levelAssets;
-
     private Vector3 finalCameraPosition;
-
-    Vector3 position;
-
+    private Vector3 position;
+    
     private void Start()
     {
         position = levelAssets.transform.localPosition;

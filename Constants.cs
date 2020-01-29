@@ -53,12 +53,13 @@ public class Constants
 
     //Tweener animations constants
     public const float time_to_complete_tween = 2.0f;
-    public const float time_to_complete_camera_tween = 2.5f;
+    public const float time_to_complete_camera_tween = 2.0f;
 
     //Rewards constants
     public const int value_of_quill = 10;
     public const int value_of_golden_kitty = 100;
     public const int value_of_dollar_bill = 1;
+    public const int awards_per_run = 2;
 
     //Methods
     public static float GetProbabilityByName(string name)

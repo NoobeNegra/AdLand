@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: f6b4b863cf1fd62449e44896d7c0c929
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - spriteAtlas: {fileID: 4343727234628468602, guid: 97c72d7ee3322624a8173d102bc74b6a,
+      type: 2}
+  - mainCamera: {instanceID: 0}
+  - toClone: {fileID: 5235682817652586111, guid: fe947363b8c190d47b5f91937e65af0f,
+      type: 3}
+  - help: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

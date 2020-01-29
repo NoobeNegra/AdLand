@@ -23,6 +23,8 @@ public class Spawner : MonoBehaviour
     // Start is called before the first frame update
     protected virtual void Start()
     {
+        gameObject.SetActive(true);
+
         finalSprites = new Sprite[spriteAtlas.spriteCount];
         probabilityOfSpawn = new float[spriteAtlas.spriteCount];
         spriteAtlas.GetSprites(finalSprites);
@@ -62,7 +64,7 @@ public class Spawner : MonoBehaviour
             currentPosition.y += height;
 
             // if it's higher that my higest jump, ask for an obstacle to help
-            if (height > Constants.jump_endTriggerHeights[Constants.jump_endTriggerHeights.Length - 1])
+            if (height > Constants.jump_endTriggerHeights[0])
             {
                 help.askedToSpawn(currentPosition.x);
             }
