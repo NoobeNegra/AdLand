@@ -29,12 +29,11 @@ public class Constants
     public const float max_distance_spawn_background = 40.0f;
     public const float next_spawn_background = 53.2f;
     public const float min_distance_object_spawn = 25.0f;
-    public const float max_distance_object_spawn = 60.0f;
+    public const float max_distance_object_spawn = 30.0f;
     public const float z_value_character = 1f;
     public const float z_value_for_plants = -0.1f;
     public const float min_height_value = -2.5f;
     public const float max_height_value = 3f;
-    public const string forced_object_helper = "table(Clone)";
     public const float tolerated_distance_between_objects = 2.0f;
     public const int max_amoun_dolla_bills = 10;
     public const float max_distance_between_dolla_bills = 0.3f;
@@ -60,6 +59,8 @@ public class Constants
     public const int value_of_golden_kitty = 100;
     public const int value_of_dollar_bill = 1;
     public const int awards_per_run = 2;
+    public const float possibility_of_award_spawn = 0.8f; // 20%
+    public const int seconds_to_destroy_gameobject = 2;
 
     //Methods
     public static float GetProbabilityByName(string name)
@@ -68,7 +69,7 @@ public class Constants
         {
             case "triple_shot_macchiato(Clone)":        return 0.6f;    //40%
             case "coffee(Clone)":                       return 0f;      //100%
-            case "instant_energy(Clone)":               return 0.8f;    //20%
+            case "instant_energy(Clone)":               return 0.5f;    //50%
 
             case "money(Clone)":                        return 0f;      //100%
             case "quill(Clone)":                        return 0.8f;    //20%
@@ -76,16 +77,17 @@ public class Constants
 
             case "cabinet_big2(Clone)":                 return 0.95f;   //5%
             case "cabinet_tall(Clone)":                 return 0.9f;    //10%
-            case "plant1(Clone)":                       return 0.85f;   //15%
             case "cabinet2(Clone)":                     return 0.8f;    //20%
             case "cabinet_big(Clone)":                  return 0.75f;   //35%
-            case "plant2(Clone)":                       return 0.7f;    //30%
             case "cabinet(Clone)":                      return 0.6f;    //40%
             case "chair_tall(Clone)":                   return 0.5f;    //50%
             case "lamp_tall(Clone)":                    return 0.4f;    //60%
-            case "plant3(Clone)":                       return 0.3f;    //70%
             case "chair(Clone)":                        return 0.25f;   //75%
             case "table(Clone)":                        return 0.1f;    //100%
+
+            case "plant1(Clone)":                       return 0.6f;    //40%
+            case "plant2(Clone)":                       return 0.2f;    //80%
+            case "plant3(Clone)":                       return 0f;      //100%
             default: return 2;
         }
     }

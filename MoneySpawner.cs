@@ -4,8 +4,23 @@ using UnityEngine;
 
 public class MoneySpawner : Spawner
 {
+    public ObstacleSpawner help;
+    public bool variateHeight;
+
     protected override void InstantiateObject(Vector3 currentPosition)
     {
+        if (variateHeight)
+        {
+            float height = Random.Range(Constants.min_height_value, Constants.max_height_value);
+            currentPosition.y += height;
+
+            // if it's higher that my higest jump, ask for an obstacle to help
+            if (height > Constants.jump_endTriggerHeights[0])
+            {
+                help.askedToSpawn(currentPosition.x);
+            }
+        }
+
         float rand = Random.value;
 
         if (rand >= 0.5f)

@@ -8,12 +8,9 @@ using Random = UnityEngine.Random;
 public class Spawner : MonoBehaviour
 {
     public UnityEngine.U2D.SpriteAtlas spriteAtlas;
-    public int timeToSpawn;
-    public bool variateHeight;
-    public bool affectedByDaylight;
+    public float timeToSpawn;
     public Camera mainCamera;
     public GameObject toClone;
-    public ObstacleSpawner help;
 
     protected float[] probabilityOfSpawn;
     protected Sprite[] finalSprites;
@@ -36,7 +33,7 @@ public class Spawner : MonoBehaviour
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         if (Time.realtimeSinceStartup < nextExecution)
             return;
@@ -58,18 +55,6 @@ public class Spawner : MonoBehaviour
         currentPosition.x = lastSpawned.x + distance;
         currentPosition.z = Constants.z_value_character;
         lastSpawned = currentPosition;
-        if (variateHeight)
-        {
-            float height = Random.Range(Constants.min_height_value, Constants.max_height_value);
-            currentPosition.y += height;
-
-            // if it's higher that my higest jump, ask for an obstacle to help
-            if (height > Constants.jump_endTriggerHeights[0])
-            {
-                help.askedToSpawn(currentPosition.x);
-            }
-        }
-
         InstantiateObject(currentPosition);
     }
     
